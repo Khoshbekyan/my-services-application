@@ -1,21 +1,22 @@
 "use client"
 
-export default function LogoutButton() {
-  async function handleLogout(e: React.MouseEvent) {
-    e.preventDefault()
-
+// 🎯 ՈՒՂՂՎԱԾ «ԵԼՔ» ՖՈՒՆԿՑԻԱՆ. Ակնթարթորեն մաքրում է քեշը և տանում գլխավոր էջ
+  const handleLogout = async () => {
     try {
-      // 1. Կանչում ենք բեքենդ API-ն, որը կջնջի cookie-ն սերվերից
-      await fetch("/api/logout", { method: "GET" })
-
-      // 2. ⚡ ՋՆՋՈՒՄ ԵՆՔ ԲՐԱՈՒԶԵՐԻ ԵՎ NEXT.JS-Ի ՈՂՋ ՀԻՇՈՂՈՒԹՅՈՒՆԸ
-      // window.location.replace-ը ամբողջությամբ զրոյացնում է Next.js-ի Router Cache-ը
-      // և օգտատիրոջը որպես անցորդ հետ է ուղարկում գլխավոր "/" էջ
-      window.location.replace("/")
+      // 1. Կանչում ենք բեքենդի ելքի API-ն, որ cookie-ն ջնջվի
+      const res = await fetch("/api/logout", { method: "POST" });
+      
+      if (res.ok) {
+        // 2. 🚀 ԱՄԵՆԱԿԱՐԵՎՈՐ ՔԱՅԼԸ. Տանում ենք գլխավոր էջ ու ստիպում բրաուզերին 
+        // լիարժեք reload անել էջը, ինչը 100%-ով թարմացնում է Header-ը առանց քեշի խնդրի
+        window.location.href = "/";
+      } else {
+        alert("Չհաջողվեց դուրս գալ համակարգից");
+      }
     } catch (err) {
-      console.error("Logout error:", err)
+      console.error("Logout error:", err);
     }
-  }
+  };
 
   return (
   <button
