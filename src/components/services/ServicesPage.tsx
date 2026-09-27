@@ -38,7 +38,7 @@ export default function ServicesPage() {
   const [newDescription, setNewDescription] = useState("");
   const [createLoading, setCreateLoading] = useState(false);
 
-  // Տվյալների սկզբնական բեռնում
+  // Տվյալների սկզբնական բեռնում բազայից
   const loadInitialData = async () => {
     try {
       setLoading(true);
@@ -76,7 +76,6 @@ export default function ServicesPage() {
 
     try {
       setCreateLoading(true);
-      // Ֆորմատավորում ենք գինը ավտոմատ " ֏" նշանով, եթե չկա
       const formattedPrice = newPrice.includes("֏") ? newPrice : `${newPrice} ֏`;
 
       const res = await fetch("/api/services", {
@@ -91,13 +90,11 @@ export default function ServicesPage() {
       });
 
       if (res.ok) {
-        // Մաքրում ենք ֆորման ու փակում մոդալը
         setNewTitle("");
         setNewPrice("");
         setNewDescription("");
         setShowCreateModal(false);
         alert("Հայտարարությունը հաջողությամբ ավելացվեց։");
-        // Live թարմացնում ենք էկրանի տվյալները բազայից
         loadInitialData();
       } else {
         const errData = await res.json();
@@ -110,6 +107,7 @@ export default function ServicesPage() {
       setCreateLoading(false);
     }
   };
+
   // Live Ֆիլտրացիայի տրամաբանություն
   useEffect(() => {
     let result = [...services];
@@ -143,9 +141,8 @@ export default function ServicesPage() {
       </div>
     );
   }
-
   return (
-    <div className="w-full min-h-screen bg-gradient-to-tr from-slate-950 via-slate-900 to-slate-950 px-4 sm:px-6 lg:px-8 py-24 font-sans text-slate-800 antialiased relative overflow-hidden">
+    <div className="w-full min-h-screen bg-gradient-to-tr from-slate-950 via-slate-900 to-slate-950 px-4 sm:px-6 lg:px-8 py-12 md:py-24 pb-28 md:pb-24 font-sans text-slate-800 antialiased relative overflow-hidden">
       
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
@@ -153,24 +150,23 @@ export default function ServicesPage() {
       <div className="max-w-6xl mx-auto relative z-10">
         
         {/* Գլխամաս և Կոճակի խելացի տրիգեր */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-slate-900 pb-8 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-slate-900 pb-6 mb-8">
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight">Ծառայություններ</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Ծառայություններ</h1>
             <p className="text-xs text-slate-400 mt-1 font-medium">Գտեք և ամրագրեք լավագույն մասնագետներին ակնթարթորեն</p>
           </div>
           
-          {/* ⚡ Եթե լոգին է՝ բացում է մոդալը, եթե լոգին չէ՝ տանում է լոգին էջ */}
           {isAuthenticated ? (
             <button
               onClick={() => setShowCreateModal(true)}
-              className="inline-flex items-center justify-center px-5 py-3 bg-white hover:bg-emerald-500 hover:text-white text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow-xl transition-all active:scale-[0.98]"
+              className="inline-flex items-center justify-center px-5 py-3.5 bg-white hover:bg-emerald-500 hover:text-white text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow-xl transition-all active:scale-[0.98] w-full sm:w-auto"
             >
               + Ավելացնել Հայտարարություն
             </button>
           ) : (
             <Link
               href="/login"
-              className="inline-flex items-center justify-center px-5 py-3 bg-white hover:bg-emerald-500 hover:text-white text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow-xl transition-all active:scale-[0.98]"
+              className="inline-flex items-center justify-center px-5 py-3.5 bg-white hover:bg-emerald-500 hover:text-white text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow-xl transition-all active:scale-[0.98] w-full sm:w-auto text-center"
             >
               Մուտք գործել՝ հայտարարություն ավելացնելու համար
             </Link>
@@ -178,19 +174,19 @@ export default function ServicesPage() {
         </div>
 
         {/* 🔍 ՖԻԼՏՐԵՐԻ ԲԼՈԿ */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10 shadow-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8 bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10 shadow-lg">
           <input
             type="text"
             placeholder="Որոնել ծառայություն..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-900/60 border border-slate-800 text-white placeholder-slate-500 px-4 py-2.5 rounded-xl text-xs font-medium outline-none focus:border-emerald-500 transition-all"
+            className="w-full bg-slate-900/60 border border-slate-800 text-white placeholder-slate-500 px-4 py-3 md:py-2.5 rounded-xl text-xs font-medium outline-none focus:border-emerald-500 transition-all"
           />
 
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full bg-slate-900/60 border border-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-medium outline-none focus:border-emerald-500 transition-all cursor-pointer"
+            className="w-full bg-slate-900/60 border border-slate-800 text-white px-4 py-3 md:py-2.5 rounded-xl text-xs font-medium outline-none focus:border-emerald-500 transition-all cursor-pointer"
           >
             <option value="Բոլորը">Բոլոր Կատեգորիաները</option>
             <option value="Վերանորոգում">Վերանորոգում</option>
@@ -202,7 +198,7 @@ export default function ServicesPage() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full bg-slate-900/60 border border-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-medium outline-none focus:border-emerald-500 transition-all cursor-pointer"
+            className="w-full bg-slate-900/60 border border-slate-800 text-white px-4 py-3 md:py-2.5 rounded-xl text-xs font-medium outline-none focus:border-emerald-500 transition-all cursor-pointer sm:col-span-2 md:col-span-1"
           >
             <option value="newest">Նորագույն հայտարարություններ</option>
             <option value="oldest">Հնագույն հայտարարություններ</option>
@@ -213,7 +209,7 @@ export default function ServicesPage() {
         {filteredServices.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredServices.map((service) => (
-              <div key={service._id} className="bg-white rounded-[32px] p-6 border border-slate-200/40 shadow-2xl transition-all duration-300 hover:translate-y-[-4px] flex flex-col justify-between group">
+              <div key={service._id} className="bg-white rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 border border-slate-200/40 shadow-2xl transition-all duration-300 hover:translate-y-[-4px] flex flex-col justify-between group">
                 <div>
                   <div className="flex items-center justify-between mb-4 select-none">
                     <span className="text-[9px] font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md border">
@@ -224,7 +220,7 @@ export default function ServicesPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-black text-slate-900 tracking-tight line-clamp-1 group-hover:text-emerald-600 transition-colors">
+                  <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight line-clamp-1 group-hover:text-emerald-600 transition-colors">
                     {service.title}
                   </h3>
                   <p className="text-xs text-slate-400 mt-2 font-medium leading-relaxed line-clamp-3">
@@ -232,14 +228,14 @@ export default function ServicesPage() {
                   </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-4">
-                  <div className="text-xl font-black text-slate-950 font-mono">
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between gap-2 sm:gap-4">
+                  <div className="text-base sm:text-xl font-black text-slate-950 font-mono break-all max-w-[60%]">
                     {service.price}
                   </div>
                   
                   <Link 
                     href={`/services/${service._id}`}
-                    className="px-4 py-2.5 bg-slate-950 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-95"
+                    className="px-4 py-2.5 bg-slate-950 hover:bg-emerald-500 text-white text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all shadow-sm active:scale-95 whitespace-nowrap"
                   >
                     Մանրամասն &rarr;
                   </Link>
@@ -248,15 +244,13 @@ export default function ServicesPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white/5 backdrop-blur-md border border-dashed border-white/10 rounded-[32px]">
+          <div className="text-center py-20 bg-white/5 backdrop-blur-md border border-dashed border-white/10 rounded-[32px] px-4">
             <p className="text-sm font-bold text-slate-400">Ոչ մի համապատասխան ծառայություն չգտնվեց։</p>
           </div>
         )}
-        {/* ==========================================
-           🔒 ՊՐԵՄԻՈՒՄ ԱՎԵԼԱՑՄԱՆ ՄՈԴԱԼ ՊԱՏՈՒՀԱՆ (CREATE LISTING MODAL)
-        ========================================== */}
+        {/* 🔒 ՊՐԵՄԻՈՒՄ ԱՎԵԼԱՑՄԱՆ ՄՈԴԱԼ ՊԱՏՈՒՀԱՆ */}
         {showCreateModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
             
             {/* Մութ թափանցիկ ետնաֆոն (Blur Overlay) */}
             <div 
@@ -264,20 +258,20 @@ export default function ServicesPage() {
               className="absolute inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity" 
             />
 
-            {/* Ֆորմայի մաքուր սպիտակ կոնտրաստային քարտը */}
-            <div className="bg-white border border-slate-100 rounded-[36px] p-6 sm:p-8 max-w-lg w-full shadow-[0_50px_100px_rgba(0,0,0,0.8)] relative z-10 animate-fade-in">
+            {/* Մոդալի սպիտակ քարտը */}
+            <div className="bg-white border border-slate-100 rounded-[32px] sm:rounded-[36px] p-5 sm:p-8 max-w-lg w-full shadow-[0_50px_100px_rgba(0,0,0,0.8)] relative z-10 my-auto">
               
               {/* Փակելու կոճակ */}
               <button 
                 onClick={() => setShowCreateModal(false)}
-                className="absolute top-5 right-5 text-slate-400 hover:text-slate-950 font-bold text-sm h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center transition-colors"
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-950 font-bold text-sm h-8 w-8 rounded-full bg-slate-50 flex items-center justify-center transition-colors"
               >
                 ✕
               </button>
 
               {/* Մոդալի վերնագիր */}
-              <div className="border-b border-slate-100 pb-4 mb-5">
-                <h3 className="text-xl font-black text-slate-950 tracking-tight">Ստեղծել Հայտարարություն</h3>
+              <div className="border-b border-slate-100 pb-3 mb-4">
+                <h3 className="text-lg sm:text-xl font-black text-slate-950 tracking-tight">Ստեղծել Հայտարարություն</h3>
                 <p className="text-xs text-slate-400 mt-0.5 font-medium">Լրացրեք ձեր ծառայության տվյալները հարթակում հրապարակելու համար</p>
               </div>
 
@@ -353,7 +347,7 @@ export default function ServicesPage() {
                   <button 
                     type="submit" 
                     disabled={createLoading}
-                    className="w-1/2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3 rounded-xl transition-all shadow-md uppercase tracking-wider disabled:opacity-50"
+                    className="w-1/2 bg-slate-900 hover:bg-emerald-500 text-white font-bold text-xs py-3 rounded-xl transition-all shadow-md uppercase tracking-wider disabled:opacity-50"
                   >
                     {createLoading ? "Ավելացվում է..." : "Հրապարակել"}
                   </button>
