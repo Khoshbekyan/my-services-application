@@ -5,8 +5,7 @@ import { connectDB as dbConnect } from "@/src/lib/mongodb";
 import { User } from "@/src/models/User";
 import { Service } from "@/src/models/Service"; // 👈 Ներմուծում ենք հայտարարությունների մոդելը
 
-const JWT_SECRET = process.env.JWT_SECRET || "super_secret_key";
-
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // ==========================================
 // 1. GET: Օգտատիրոջ և ՄԻԱՅՆ ԻՐ հայտարարությունների ստացում
@@ -22,7 +21,13 @@ export async function GET() {
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-
+    // ⚡ Ստուգում ենք, որ դատարկ չլինի
+    if (!JWT_SECRET) {
+      return NextResponse.json(
+        { error: "JWT_SECRET missing" },
+        { status: 500 },
+      );
+    }
     // Վավերացնում ենք տոկենը
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
     // Փնտրում ենք օգտատիրոջը բազայում՝ առանց пароль-ի
@@ -40,12 +45,14 @@ export async function GET() {
     // Միավորում ենք օգտատիրոջ տվյալները և իր հայտարարությունները մեկ JSON-ի մեջ
     return NextResponse.json({
       ...user,
-      myServices: myServices // 👈 Ուղարկում ենք ֆրոնտենդ
+      myServices: myServices, // 👈 Ուղարկում ենք ֆրոնտենդ
     });
-
   } catch (error) {
     console.error("GET Profile Error:", error);
-    return NextResponse.json({ message: "Invalid or expired token" }, { status: 401 });
+    return NextResponse.json(
+      { message: "Invalid or expired token" },
+      { status: 401 },
+    );
   }
 }
 // ==========================================
@@ -71,11 +78,13 @@ export async function PUT(request: Request) {
     const user = await User.findByIdAndUpdate(
       decoded.userId,
       { firstName, lastName, phone },
-      { 
-        new: true, 
-        runValidators: true 
-      }
-    ).select("-password").lean();
+      {
+        new: true,
+        runValidators: true,
+      },
+    )
+      .select("-password")
+      .lean();
 
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
@@ -91,11 +100,14 @@ export async function PUT(request: Request) {
       message: "Profile updated successfully",
       user: {
         ...user,
-        myServices
+        myServices,
       },
     });
   } catch (error) {
     console.error("PUT Profile Error:", error);
-    return NextResponse.json({ message: "Something went wrong" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Something went wrong" },
+      { status: 500 },
+    );
   }
 }
