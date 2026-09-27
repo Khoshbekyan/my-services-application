@@ -16,6 +16,8 @@ const ServiceSchema: Schema = new Schema(
     title: { type: String, required: true },
     price: { type: String, required: true },
     category: { type: String, required: true },
+    subCategory: { type: String, default: "" }, // 🎯 Ավելացվեց ենթակատեգորիայի դաշտը
+    location: { type: String, default: "" }, //🎯 Կպահի ընտրված քաղաքը/շրջանը
     status: { type: String, default: "Նոր" },
     description: { type: String, required: true },
     // ⚡ ԿԱՊԸ USER-Ի ՀԵՏ. Պահում է ստեղծողի ID-ն
