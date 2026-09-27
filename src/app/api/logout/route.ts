@@ -1,14 +1,25 @@
-// 📄 ՖԱՅԼ: app/api/logout/route.ts
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
-  const response = NextResponse.redirect(new URL("/login", request.url))
+export async function POST() {
+  try {
+    const response = NextResponse.json(
+      { success: true, message: "Դուք հաջողությամբ դուրս եկաք համակարգից" },
+      { status: 200 }
+    );
 
-  // Ջնջում ենք տոկենը բրաուզերից
-  response.cookies.set("token", "", { 
-    path: "/", 
-    maxAge: 0 
-  })
+    // 🚀 ԱՆԽՈՑԵԼԻ ՀԱՐՎԱԾ. Ստեղծում ենք նույն անունով դատարկ cookie 
+    // և maxAge-ը դնում ենք 0 (վայրկյան): Սա բրաուզերին ՍՏԻՊՈՒՄ Է 
+    // անմիջապես աղբամանը գցել HttpOnly թոքենը, path-ը պարտադիր նշում ենք "/"
+    response.cookies.set("token", "", {
+      path: "/",
+      maxAge: 0,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict"
+    });
 
-  return response
+    return response;
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }

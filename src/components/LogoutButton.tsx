@@ -1,29 +1,20 @@
-"use client"
+import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
-export default function LogoutButton() {
-  async function handleLogout(e: React.MouseEvent) {
-    e.preventDefault()
+// 🎯 ✅ Օգտագործում ենք POST մեթոդը, որը կանչվում է Header-ից
+export async function POST() {
+  try {
+    const cookieStore = await cookies();
+    
+    // 🚀 ԱՄԵՆԱԿԱՐԵՎՈՐ ՏՈՂԸ. Ջնջում ենք Token-ի cookie-ն հենց սերվերից
+    cookieStore.delete("token");
 
-    try {
-      // 1. 🎯 ✅ ՈՒՂՂՎԱԾ. Կանչում ենք POST մեթոդով, որպեսզի բեքենդ API-ն ճիշտ ընդունի հարցումը
-      await fetch("/api/logout", { method: "POST" })
-
-      // 2. ⚡ ՋՆՋՈՒՄ ԵՆՔ ԲՐԱՈՒԶԵՐԻ ԵՎ NEXT.JS-Ի ՈՂՋ ՀԻՇՈՂՈՒԹՅՈՒՆԸ
-      // window.location.replace-ը ամբողջությամբ զրոյացնում է Next.js-ի Router Cache-ը
-      // և օգտատիրոջը որպես անցորդ հետ է ուղարկում գլխավոր "/" էջ
-      window.location.replace("/")
-    } catch (err) {
-      console.error("Logout error:", err)
-    }
+    // Հետ ենք ուղարկում մաքուր պատասխան, որ ֆրոնտենդը հանգիստ անցնի առաջ
+    return NextResponse.json(
+      { success: true, message: "Դուք հաջողությամբ դուրս եկաք համակարգից" }, 
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
-  return (
-    <button 
-      onClick={handleLogout}
-      className="text-xs font-bold text-slate-400 hover:text-white transition-colors uppercase tracking-wider"
-    >
-      Ելք
-    </button>
-  );
 }
-
