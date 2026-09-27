@@ -68,7 +68,12 @@ export async function PUT(request: Request) {
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
-
+  if (!JWT_SECRET) {
+      return NextResponse.json(
+        { error: "Սերվերի կարգավորումների սխալ (JWT_SECRET-ը գտնված չէ)" },
+        { status: 500 },
+      );
+    }
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
 
     const body = await request.json();
